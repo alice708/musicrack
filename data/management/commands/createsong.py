@@ -8,7 +8,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("--id", required=True, type=str)
         parser.add_argument("--name", required=True, type=str)
-        parser.add_argument("--length", required=True, type=int)
+        parser.add_argument("--length", required=True, type=str)
 
 
     def handle(self, *args, **options):
