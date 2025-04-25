@@ -5,6 +5,9 @@ class Artist(models.Model):
     name = models.CharField(max_length=200)
     genre = models.CharField(max_length=200)
 
+    def __str__(self):
+       return self.name
+
     @classmethod
     def create(cls, id, name, genre):
         artist = cls(id=id, name=name, genre=genre)
@@ -15,6 +18,9 @@ class Album(models.Model):
     name = models.CharField(max_length=200)
     year_released = models.IntegerField()
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
+
+    def __str__(self):
+       return self.name
 
     @classmethod
     def create(cls, id, name, year_released, artist):
@@ -28,6 +34,9 @@ class Song(models.Model):
     # Or make this 2 fields, mins/secs and display it as one?
     length = models.CharField(max_length=200)
     album = models.ForeignKey(Album, on_delete=models.CASCADE)
+
+    def __str__(self):
+       return self.name
 
     @classmethod
     def create(cls, id, name, length, album):
