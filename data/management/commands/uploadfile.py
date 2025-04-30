@@ -1,6 +1,6 @@
-import argparse
 from django.core.management.base import BaseCommand, CommandError
 from data.models import Artist,Album,Song
+import csv
 
 class Command(BaseCommand):
     help = "Closes the specified poll for voting"
@@ -21,7 +21,6 @@ class Command(BaseCommand):
         return all(char.isdigit() for char in row[2]) and len(row[2]) == 4
 
     def handle(self, *args, **options):
-        import csv
         with open(options["file"], newline='') as csvfile:
             filereader = csv.reader(csvfile, delimiter='|')
 
@@ -29,7 +28,6 @@ class Command(BaseCommand):
             current_album_id = None
 
             for row in filereader:
-                print(', '.join(row))
                 # If artist row then set the current album to none since the previous
                 # album was a different artist and the next row should contain an album 
                 if self.is_artist_row(row):
@@ -43,5 +41,9 @@ class Command(BaseCommand):
                 elif current_album_id != None:
                     Song.create(id=row[0], name=row[1], length=row[2], album=current_album_id).save()
                 else:
-                    print("song file not in correct format, see README for correct format")
+                    error = "Song file not in correct format, see README for correct format"
+                    self.stderr.write(error)
+                    raise Exception(error)
+                
+        self.stdout.write("Succesfully uploaded song file")
                 

@@ -1,7 +1,11 @@
+from io import StringIO
 from django.test import TestCase
 from .management.commands.uploadfile import Command as UploadFile
+from django.core.management import call_command
+import csv
+from .models import Artist, Album, Song
 
-class UploadFileTests(TestCase):
+class UploadFileValidatorTests(TestCase):
     
     def test_is_artist_row_correct(self):
         artist_row = ["4gzpq5DPGxSnKTe4SA8HAU", "Coldplay", "rock"]
@@ -30,3 +34,109 @@ class UploadFileTests(TestCase):
     def test_is_album_row_empty(self):
         album_row = ["4gzpq5DPGxSnKTe4SA8HAU", "Skin", ""]
         self.assertIs(UploadFile.is_album_row(UploadFile, album_row), False)
+
+class UploadFileHandleTests(TestCase):
+    def call_command(self, *args, **options):
+        out = StringIO()
+        call_command(
+            "uploadfile",
+            *args,
+            stdout=out,
+            stderr=StringIO(),
+            **options,
+        )
+        return out.getvalue()
+    
+    # This could be exanded to test more complicated files with 
+    # multiple artists, multiple album per artist and songs per album
+    def test_uploading_correct_song_file(self):
+        artist = ['4gzpq5DPGxSnKTe4SA8HAU', 'Coldplay', 'rock']
+        album = ['0RHX9XECH8IVI3LNgWDpmQ', 'A Rush of Blood to the Head', '2002']
+        song = ['0u35Dpz37TY2M2j20RUdMf', 'Politik', '5:18']
+
+        with open('test.txt', 'w') as csvfile:
+            songwriter = csv.writer(csvfile, delimiter='|')
+            songwriter.writerow(artist)
+            songwriter.writerow(album)
+            songwriter.writerow(song)
+
+        out = self.call_command("--file", "test.txt")
+        self.assertEqual(out, "Succesfully uploaded song file\n")
+
+        result_artist = Artist.objects.get(id=artist[0])
+        self.assertEqual(result_artist.name, artist[1])
+        self.assertEqual(result_artist.genre, artist[2])
+
+        result_album = Album.objects.get(id=album[0])
+        self.assertEqual(result_album.name, album[1])
+        self.assertEqual(str(result_album.year_released), album[2])
+
+        result_song = Song.objects.get(id=song[0])
+        self.assertEqual(result_song.name, song[1])
+        self.assertEqual(result_song.length, song[2])
+
+        import os
+        os.remove("test.txt")
+
+
+    def test_uploading_correct_complicated_song_file(self):
+        x = """4gzpq5DPGxSnKTe4SA8HAU|Coldplay|rock|
+0RHX9XECH8IVI3LNgWDpmQ|A Rush of Blood to the Head|2002|
+0u35Dpz37TY2M2j20RUdMf|Politik|5:18|
+2nvC4i2aMo4CzRjRflysah|In My Place|3:36|
+aaaaaaECH8IVI3LNgWDpmQ|Second Coldplay Album|2002|
+4hf0hL4kWyjWztZzVsM39V|God Put a Smile upon Your Face|4:57|
+34EP7KEpOjXcM2TCat1ISk|Wu-Tang Clan|hip-hop|
+3tQd5mwBtVyxCoEo4htGAV|Enter The Wu-Tang (36 Chambers)|1993|
+1v5cgIyffYtfEx0swttdoE|Bring Da Ruckus|4:11|
+7IwURvEfVcdxUCjLKUu6sv|Shame On a N***a|2:57|
+4LaiF2h7gsybmURceGYLqh|Clan In Da Front|4:33|
+6nxWCVXbOlEVRexSbLsTer|Flume|dance|
+1sxqYNzozsrgu0Vh6jQ6Lr|Skin|2016|
+79uaE0SyKAz90xMWHLDgjL|Helix|3:30|
+476j7IDRIDRvv1Xu71EVc8|Never Be Like You|3:53|
+7zD7iZPRbfB0NSPuFNpkRH|Lose It|3:45|"""
+
+        with open('test.txt', 'w') as f:
+            f.writelines(x)
+
+        out = self.call_command("--file", "test.txt")
+        self.assertEqual(out, "Succesfully uploaded song file\n")
+
+        result_artist = Artist.objects.get(id='4gzpq5DPGxSnKTe4SA8HAU')
+        self.assertEqual(result_artist.name, 'Coldplay')
+
+        result_album1 = Album.objects.get(id='0RHX9XECH8IVI3LNgWDpmQ')
+        self.assertEqual(result_album1.name, 'A Rush of Blood to the Head')
+
+        result_album2 = Album.objects.get(id='aaaaaaECH8IVI3LNgWDpmQ')
+        self.assertEqual(result_album2.name, 'Second Coldplay Album')
+
+        import os
+        os.remove("test.txt")
+
+
+
+    def test_uploading_incorrect_song_file(self):
+        # Incorrect file since the first line is not an artist
+        x = """4gzpq5DPGxSnKTe4SA8HAU|Coldplay|1999|"""
+        with open('test.txt', 'w') as f:
+            f.writelines(x)
+        
+        with self.assertRaises(Exception):
+            self.call_command("--file", "test.txt")
+
+        import os
+        os.remove("test.txt")
+
+        
+
+
+        
+
+
+
+
+
+        
+
