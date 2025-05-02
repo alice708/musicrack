@@ -20,9 +20,10 @@ password: password
 (This is only for local use so security is not a concern)
 ```
 - If you have already added any data, uploading a file will only add missing items, it will not overwrite or delete existing data.
-- Then on the left sidebar under Data you can click of ALbums, Artists or Songs to view them.
+- Then on the left sidebar under Data you can click of Albums, Artists or Songs to view them.
+- Clicking on a specific Artist lets you edit it and it's Albums
+- Clicking on a specific Album lets you edit it and it's Songs
 - Within each data page there is a search bar that searches based on information in all coloumns.
-- You can use this to find all Songs of a particular Ablum or all Albums of a particular Artist.
 - You can also add items (using the +Add button) and delete items (using the Action dropdown menu)
 - Deleting an Album deletes all songs belonging to it.
 - Deleting an Artist deletes all Albums belonging to it (and therefore all songs belonging to the Artist).
