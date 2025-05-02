@@ -47,8 +47,8 @@ class UploadFileHandleTests(TestCase):
         )
         return out.getvalue()
     
-    # This could be exanded to test more complicated files with 
-    # multiple artists, multiple album per artist and songs per album
+    # Test a simple song file and check the song album and artist are correctly 
+    # uploaded to the database   
     def test_uploading_correct_song_file(self):
         artist = ['4gzpq5DPGxSnKTe4SA8HAU', 'Coldplay', 'rock']
         album = ['0RHX9XECH8IVI3LNgWDpmQ', 'A Rush of Blood to the Head', '2002']
@@ -61,7 +61,7 @@ class UploadFileHandleTests(TestCase):
             songwriter.writerow(song)
 
         out = self.call_command("--file", "test.txt")
-        self.assertEqual(out, "Succesfully uploaded song file\n")
+        self.assertEqual(out, "Succesfully uploaded song file data\n")
 
         result_artist = Artist.objects.get(id=artist[0])
         self.assertEqual(result_artist.name, artist[1])
@@ -79,6 +79,8 @@ class UploadFileHandleTests(TestCase):
         os.remove("test.txt")
 
 
+    # Test a more complicated song file with multiple songs, albums and artists.
+    # Only do a few checks, e.g. that a second album can be added for an artist. 
     def test_uploading_correct_complicated_song_file(self):
         x = """4gzpq5DPGxSnKTe4SA8HAU|Coldplay|rock|
 0RHX9XECH8IVI3LNgWDpmQ|A Rush of Blood to the Head|2002|
@@ -101,7 +103,7 @@ aaaaaaECH8IVI3LNgWDpmQ|Second Coldplay Album|2002|
             f.writelines(x)
 
         out = self.call_command("--file", "test.txt")
-        self.assertEqual(out, "Succesfully uploaded song file\n")
+        self.assertEqual(out, "Succesfully uploaded song file data\n")
 
         result_artist = Artist.objects.get(id='4gzpq5DPGxSnKTe4SA8HAU')
         self.assertEqual(result_artist.name, 'Coldplay')

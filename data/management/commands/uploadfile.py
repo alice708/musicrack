@@ -3,17 +3,15 @@ from data.models import Artist,Album,Song
 import csv
 
 class Command(BaseCommand):
-    help = "Closes the specified poll for voting"
+    help = "Uploads music data from a file. See README for usage"
 
     def add_arguments(self, parser):
         parser.add_argument("--file", required=True, type=str)
 
     def is_artist_row(self, row):
-        # Row[2] is either the artists genre, the albums year release or the songs length
+        # Row[2] is either the artist`s genre, the album`s year release or a song`s length
         # the latter two contain digits so a row[2] that contians no digits should mean that
-        # the row represents an artsit
-        # The genre not containing digits isn't neccaserily true, but is true for the
-        # song.txt file so do this for now to prototype the code
+        # the row represents an artist
         return not any(char.isdigit() for char in row[2])   
     
     def is_album_row(self, row):
@@ -28,16 +26,17 @@ class Command(BaseCommand):
             current_album_id = None
 
             for row in filereader:
-                # If artist row then set the current album to none since the previous
-                # album was a different artist and the next row should contain an album 
                 if self.is_artist_row(row):
                     Artist.create(id=row[0], name=row[1], genre=row[2]).save()
                     current_artist_id = row[0]
+                    # Set the current album to none since the previous album belonged to a
+                    # different artist and the next row should contain a new album (or another artist)
                     current_album_id = None
-                # The check for an artist id is only to check that the first row was an artist
+                # Can only create an Album if it belongs to an Artist
                 elif current_artist_id != None and self.is_album_row(row):
                     Album.create(id=row[0], name=row[1], year_released=row[2], artist=current_artist_id).save()
                     current_album_id = row[0]
+                # Can only create a Song if it belongs to an Album
                 elif current_album_id != None:
                     Song.create(id=row[0], name=row[1], length=row[2], album=current_album_id).save()
                 else:
@@ -45,5 +44,5 @@ class Command(BaseCommand):
                     self.stderr.write(error)
                     raise Exception(error)
                 
-        self.stdout.write("Succesfully uploaded song file")
+        self.stdout.write("Succesfully uploaded song file data")
                 

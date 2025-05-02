@@ -63,3 +63,4 @@ Run `python manage.py test data` to run all tests.
 - Tests should clean up after themselves (specifically deleting test files they created) even if they fail
 - Song listing should show which Artist they belong to - Django easily lets you should 1 step relationships (song-album and album-song) but 2 step (song-artist) would be harder to add.
 - If the song file is incorrectly formatted the error message should say which row is at fault and why. (Currently there is just a generic error message for any problem)
+- Validate the uploaded data. I.e. check that an Albums year of release is exactly 4 digits and a songs length is of the correct format (a custom data type could be used for this) 
