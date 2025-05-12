@@ -1,0 +1,12 @@
+{% extends "data/base.html" %}
+
+{% block title %}{{name}}{% endblock %}
+
+{% block content %}
+<h1>{{name}}</h1>
+
+<p>Name: {{ name }}</p>
+<p>In album: {{ album }}</p>
+<p>Length: {{ length }}</p>
+<p>ID: {{ id }}</p>
+{% endblock %}

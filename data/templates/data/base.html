@@ -1,0 +1,14 @@
+{% load static %}
+<html lang="en">
+<head>
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+    {% load static %}
+    <img src="{% static 'data/logo.webp' %}" height=40 alt="Logo">
+    <div style='vertical-align:top; display:inline; font-size:33;'>
+        Music Rack
+    </div>
+    {% block content %}{% endblock %}
+</body>
+</html>
