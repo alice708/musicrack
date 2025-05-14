@@ -8,6 +8,11 @@ Django web application for sorting your music library.
 - Create a venv, for example: `python3 -m venv ~/.virtualenvs/djangodev`
 - Activate it `source ~/.virtualenvs/musicrack/bin/activate`
 - Install python packages `pip install -r requirements.txt`
+- Create a .env file in the project root. Specify the SECRET_KEY and DEBUG setting you want to use, for example:
+```
+SECRET_KEY=my-secret-key
+DEBUG=True
+```
 
 ## Usage
 - In a seperate terminal run `python manage.py runserver`
