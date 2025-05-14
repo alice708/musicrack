@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from django.core.management.base import BaseCommand, CommandError
 from data.models import Artist,Album,Song
 import csv
-from  django.utils.dateparse import parse_duration
+from  django.utils.dateparse import parse_duration, parse_date
 
 
 class Command(BaseCommand):
@@ -38,7 +38,9 @@ class Command(BaseCommand):
                     current_album_id = None
                 # Can only create an Album if it belongs to an Artist
                 elif current_artist_id is not None and self.is_album_row(row):
-                    Album.create(id=row[0], name=row[1], year_released=row[2], artist=current_artist_id).save()
+                    # Put 1st Jan as defaults, since we can't just specify year
+                    date = datetime(int(row[2]), 1, 1)
+                    Album.create(id=row[0], name=row[1], year_released=date, artist=current_artist_id).save()
                     current_album_id = row[0]
                 # Can only create a Song if it belongs to an Album
                 elif current_album_id is not None:

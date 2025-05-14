@@ -13,7 +13,7 @@ class SongInLine(admin.TabularInline):
 
 class AlbumAdmin(admin.ModelAdmin):
     fields = ["name", "year_released", "id", "artist"]
-    list_display = ["name", "year_released", "artist"]
+    list_display = ["name", "year", "artist"]
     search_fields = ["name", "year_released", "artist__name"]
     inlines = [SongInLine]
 admin.site.register(Album, AlbumAdmin)

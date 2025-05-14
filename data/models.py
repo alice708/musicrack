@@ -16,11 +16,14 @@ class Artist(models.Model):
 class Album(models.Model):
     id = models.CharField(max_length=200, primary_key=True)
     name = models.CharField(max_length=200)
-    year_released = models.IntegerField()
+    year_released = models.DateField()
     artist = models.ForeignKey(Artist, on_delete=models.CASCADE)
 
     def __str__(self):
        return self.name
+    
+    def year(self):
+        return self.year_released.year
 
     @classmethod
     def create(cls, id, name, year_released, artist):
@@ -35,7 +38,7 @@ class Song(models.Model):
 
     def __str__(self):
        return self.name
-
+    
     @classmethod
     def create(cls, id, name, length, album):
         song = cls(id=id, name=name, length=length, album=Album.objects.get(id=album))
