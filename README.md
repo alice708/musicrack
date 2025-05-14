@@ -2,13 +2,15 @@
 
 Django web application for sorting your music library.
 
-## Requirements
-Have python 3.10 or higher and Django installed. See https://docs.djangoproject.com/en/5.2/intro/install/
+## Installation
+- The only requirent is Python 3.10 or higher
+- Git clone the repository and cd into it
+- Create a venv, for example: `python3 -m venv ~/.virtualenvs/djangodev`
+- Activate it `source ~/.virtualenvs/musicrack/bin/activate`
+- Install python packages `pip install -r requirements.txt`
 
 ## Usage
-
-- Git clone the repository
-- python manage.py runserver
+- In a seperate terminal run `python manage.py runserver`
 - Use the upload file command to upload your song file to the site:
 
 `python manage.py uploadfile --file <song file path>`
