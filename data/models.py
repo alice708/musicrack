@@ -30,7 +30,7 @@ class Album(models.Model):
 class Song(models.Model):
     id = models.CharField(max_length=200, primary_key=True)
     name = models.CharField(max_length=200)
-    length = models.CharField(max_length=200)
+    length = models.DurationField()
     album = models.ForeignKey(Album, on_delete=models.CASCADE)
 
     def __str__(self):

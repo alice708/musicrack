@@ -1,6 +1,9 @@
+from datetime import datetime, timedelta
 from django.core.management.base import BaseCommand, CommandError
 from data.models import Artist,Album,Song
 import csv
+from  django.utils.dateparse import parse_duration
+
 
 class Command(BaseCommand):
     help = "Uploads music data from a file. See README for usage"
@@ -17,6 +20,7 @@ class Command(BaseCommand):
     def is_album_row(self, row):
         # Assume year released is exactly 4 digits
         return all(char.isdigit() for char in row[2]) and len(row[2]) == 4
+    
 
     def handle(self, *args, **options):
         with open(options["file"], newline='') as csvfile:
@@ -33,12 +37,12 @@ class Command(BaseCommand):
                     # different artist and the next row should contain a new album (or another artist)
                     current_album_id = None
                 # Can only create an Album if it belongs to an Artist
-                elif current_artist_id != None and self.is_album_row(row):
+                elif current_artist_id is not None and self.is_album_row(row):
                     Album.create(id=row[0], name=row[1], year_released=row[2], artist=current_artist_id).save()
                     current_album_id = row[0]
                 # Can only create a Song if it belongs to an Album
-                elif current_album_id != None:
-                    Song.create(id=row[0], name=row[1], length=row[2], album=current_album_id).save()
+                elif current_album_id is not None:
+                    Song.create(id=row[0], name=row[1], length=parse_duration(row[2]), album=current_album_id).save()
                 else:
                     error = "Song file not in correct format, see README for correct format"
                     self.stderr.write(error)
