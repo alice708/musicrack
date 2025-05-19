@@ -69,11 +69,11 @@ class UploadFileHandleTests(TestCase):
 
         result_album = Album.objects.get(id=album[0])
         self.assertEqual(result_album.name, album[1])
-        self.assertEqual(str(result_album.year_released), album[2])
+        self.assertEqual(str(result_album.year_released), "2002-01-01") # Year stored as a date with 1st Jan
 
         result_song = Song.objects.get(id=song[0])
         self.assertEqual(result_song.name, song[1])
-        self.assertEqual(result_song.length, song[2])
+        self.assertEqual(result_song.length.seconds, 5*60+18) # Length stored as a datetime timedelta
 
         import os
         os.remove("test.txt")
